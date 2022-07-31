@@ -1,58 +1,74 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
-import { getContacts, addContact, deleteContact } from './conacts-operations';
+import * as operations from './contacts-operations';
 
 const initialState = {
-    items: [],
-    loading: false,
-    error: null
-}
+  items: [
+    // { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+    // { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+    // { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+    // { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+  ],
+  filter: '',
+  loading: false,
+  error: null,
+};
 
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   extraReducers: {
-    [getContacts.pending]: (store, _) => ({
-      ...store,
+    // ----Get contacts
+    [operations.getContacts.pending]: (state, _) => ({
+      ...state,
       loading: true,
       error: null,
     }),
-    [getContacts.fulfilled]: (store, { payload }) => {
-      store.loading = false;
-      store.items = payload;
-    },
-    [getContacts.rejected]: (store, { payload }) => {
-      store.loading = false;
-      store.error = payload;
-    },
-
-    [addContact.pending]: (store, _) => ({
-      ...store,
+    [operations.getContacts.fulfilled]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      items: payload,
+    }),
+    [operations.getContacts.rejected]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      items: payload,
+    }),
+    // -----
+    // ----Add contacts
+    [operations.addContact.pending]: state => ({
+      ...state,
       loading: true,
       error: null,
     }),
-    [addContact.fulfilled]: (store, { payload }) => {
-      store.loading = false;
-      store.items.push(payload);
-    },
-    [addContact.rejected]: (store, { payload }) => {
-      store.loading = false;
-      store.error = payload;
-    },
-
-    [deleteContact.pending]: (store, _) => ({
-      ...store,
+    [operations.addContact.fulfilled]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      items: [...state.items, payload],
+    }),
+    [operations.addContact.rejected]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      error: payload,
+    }),
+    // -----
+    // ----Delete contacts
+    [operations.deleteContact.pending]: state => ({
+      ...state,
       loading: true,
       error: null,
     }),
-    [deleteContact.fulfilled]: (store, { payload }) => {
-      store.loading = false;
-      store.items = store.items.filter(item => item.id !== payload);
-    },
-    [deleteContact.rejected]: (store, { payload }) => {
-      store.loading = false;
-      store.error = payload;
-    },
+    [operations.deleteContact.fulfilled]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      items: state.items.filter(item => item.id !== payload),
+    }),
+    [operations.deleteContact.rejected]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      error: payload,
+    }),
+    // -----
   },
 });
 
